@@ -22,7 +22,7 @@ const signup = async (req, res, next) => {
 
     if (user) {
       return res.status(400).json({
-        message: "Credentials already taken",
+        error: "Credentials already taken",
       });
     }
 
