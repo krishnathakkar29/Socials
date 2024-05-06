@@ -131,7 +131,11 @@ const likeUnlikePost = async (req, res, next) => {
           likedPosts: postId,
         },
       });
-      return res.status(200).json({ message: "Post unliked Successfully" });
+
+      const updatedLikes = post.likes.filter(
+        (id) => id.toString() !== userId.toString()
+      );
+      return res.status(200).json(updatedLikes);
     } else {
       //like post
       post.likes.push(userId);
@@ -144,7 +148,8 @@ const likeUnlikePost = async (req, res, next) => {
         type: "like",
       });
 
-      return res.status(200).json({ message: "Post liked Successfully" });
+      const updatedLikes = post.likes
+      return res.status(200).json(updatedLikes);
     }
   } catch (error) {
     console.log("Error in likeUnlikePost controller: ", error);
@@ -227,29 +232,29 @@ const getFollowingPosts = async (req, res) => {
 };
 
 const getUserPosts = async (req, res) => {
-    try {
-		const { username } = req.params;
+  try {
+    const { username } = req.params;
 
-		const user = await User.findOne({ username });
-		if (!user) return res.status(404).json({ error: "User not found" });
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ error: "User not found" });
 
-		const posts = await Post.find({ user: user._id })
-			.sort({ createdAt: -1 })
-			.populate({
-				path: "user",
-				select: "-password",
-			})
-			.populate({
-				path: "comments.user",
-				select: "-password",
-			});
+    const posts = await Post.find({ user: user._id })
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "user",
+        select: "-password",
+      })
+      .populate({
+        path: "comments.user",
+        select: "-password",
+      });
 
-		return res.status(200).json(posts);
-	} catch (error) {
-		console.log("Error in getUserPosts controller: ", error);
-		return res.status(500).json({ error: "Internal server error" });
-	}
-}
+    return res.status(200).json(posts);
+  } catch (error) {
+    console.log("Error in getUserPosts controller: ", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 export {
   createPost,
@@ -259,5 +264,5 @@ export {
   getAllPosts,
   getLikedPosts,
   getFollowingPosts,
-  getUserPosts
-}
+  getUserPosts,
+};

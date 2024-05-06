@@ -50,9 +50,49 @@ const Post = ({ post }) => {
     },
   });
 
+  const { mutate:likePost, isPending: isLiking } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`/api/posts/like/${post._id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await res.json();
+
+        if (!res.ok)
+          throw new Error(
+            data.error || "Something went wrong while liking post"
+          );
+
+        return data;
+      } catch (error) {
+        console.log("Error in liking post client: ", error);
+        throw new Error(error);
+      }
+    },
+    onSuccess: (updatedLikes) => {
+      toast.success("Post liked");
+      //invalidating would take time
+      queryClient.setQueryData(["posts"], (oldData) => {
+        return oldData.map((p) => {
+          if(p._id == post._id){
+            return {...p, likes:updatedLikes}
+          }
+          return p
+        })
+      })
+    },
+    onError: () => {
+      toast.error(error.message);
+    },
+  });
+
   const [comment, setComment] = useState("");
   const postOwner = post.user;
-  const isLiked = false;
+  const isLiked = post.likes.includes(authUser._id)
 
   const isMyPost = authUser?.username == post?.user?.username;
 
@@ -68,7 +108,10 @@ const Post = ({ post }) => {
     e.preventDefault();
   };
 
-  const handleLikePost = () => {};
+  const handleLikePost = () => {
+    if(isLiking) return
+    likePost();
+  };
 
   return (
     <>
@@ -130,7 +173,7 @@ const Post = ({ post }) => {
                   {post.comments.length}
                 </span>
               </div>
-              {/* We're using Modal Component from DaisyUI */}
+              {/* Modal Daisyui */}
               <dialog
                 id={`comments_modal${post._id}`}
                 className="modal border-none outline-none"
@@ -180,11 +223,7 @@ const Post = ({ post }) => {
                       onChange={(e) => setComment(e.target.value)}
                     />
                     <button className="btn btn-primary rounded-full btn-sm text-white px-4">
-                      {isCommenting ? (
-                        <span className="loading loading-spinner loading-md"></span>
-                      ) : (
-                        "Post"
-                      )}
+                      {isCommenting ? <LoadingSpinner size="md" /> : "Post"}
                     </button>
                   </form>
                 </div>
@@ -202,16 +241,17 @@ const Post = ({ post }) => {
                 className="flex gap-1 items-center group cursor-pointer"
                 onClick={handleLikePost}
               >
-                {!isLiked && (
+                {isLiking && <LoadingSpinner size="sm" />}
+                {!isLiked && !isLiking && (
                   <FaRegHeart className="w-4 h-4 cursor-pointer text-slate-500 group-hover:text-pink-500" />
                 )}
-                {isLiked && (
+                {isLiked && !isLiking && (
                   <FaRegHeart className="w-4 h-4 cursor-pointer text-pink-500 " />
                 )}
 
                 <span
-                  className={`text-sm text-slate-500 group-hover:text-pink-500 ${
-                    isLiked ? "text-pink-500" : ""
+                  className={`text-sm  group-hover:text-pink-500 ${
+                    isLiked ? "text-pink-500" : "text-slate-500"
                   }`}
                 >
                   {post.likes.length}
