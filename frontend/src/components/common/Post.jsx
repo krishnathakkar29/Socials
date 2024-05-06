@@ -11,6 +11,14 @@ import LoadingSpinner from "./LoadingSpinner";
 import { convertDate } from "../../utils/helper";
 
 const Post = ({ post }) => {
+  
+
+  const queryClient = useQueryClient();
+
+  const { data: authUser } = useQuery({
+    queryKey: ["authUser"],
+  });
+
   const [comment, setComment] = useState("");
   const postOwner = post.user;
   const isLiked = post.likes.includes(authUser._id);
@@ -18,12 +26,6 @@ const Post = ({ post }) => {
   const isMyPost = authUser?.username == post?.user?.username;
 
   const formattedDate = convertDate(post.createdAt);
-
-  const queryClient = useQueryClient();
-
-  const { data: authUser } = useQuery({
-    queryKey: ["authUser"],
-  });
 
   const {
     mutate: deleteMutation,
