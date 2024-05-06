@@ -26,7 +26,7 @@ const NotificationPage = () => {
 
         if (!res.ok)
           throw new Error(
-            data.message || "Something went wrong while fetching notifications"
+            data.error || "Something went wrong while fetching notifications"
           );
 
         return data;
@@ -48,7 +48,7 @@ const NotificationPage = () => {
 
         if (!res.ok)
           throw new Error(
-            data.message || "Something went wrong while fetching notifications"
+            data.error || "Something went wrong while fetching notifications"
           );
 
         return data;

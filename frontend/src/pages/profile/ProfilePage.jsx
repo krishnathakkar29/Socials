@@ -11,11 +11,14 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { useQuery } from "@tanstack/react-query";
-import moment from "moment";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { convertDate } from "../../utils/helper";
+import { useFollow } from "../../hooks/Follow";
+import toast from "react-hot-toast";
 
 const ProfilePage = () => {
+  const queryClient = useQueryClient();
+
   const [coverImg, setCoverImg] = useState(null);
   const [profileImg, setProfileImg] = useState(null);
   const [feedType, setFeedType] = useState("posts");
@@ -23,10 +26,12 @@ const ProfilePage = () => {
   const coverImgRef = useRef(null);
   const profileImgRef = useRef(null);
 
-  // const isLoading = false;
-  const isMyProfile = true;
-
   const { username } = useParams();
+
+  const { followUnfollow, isPending } = useFollow();
+  const { data: authUser } = useQuery({
+    queryKey: ["authUser"],
+  });
 
   const {
     data: user,
@@ -44,7 +49,7 @@ const ProfilePage = () => {
 
         if (!res.ok)
           throw new Error(
-            data.message || "Something went wrong while fetching the profile "
+            data.error || "Something went wrong while fetching the profile "
           );
 
         return data;
@@ -55,9 +60,57 @@ const ProfilePage = () => {
     },
   });
 
+  const { mutateAsync: updateProfile, isPending: isUpdatingPending } =
+    useMutation({
+      mutationFn: async () => {
+        try {
+          const res = await fetch("/api/users/update", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              coverImg,
+              profileImg,
+            }),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok)
+            throw new Error(
+              data.error || "Something went wrong while updating..."
+            );
+
+          return data;
+        } catch (error) {
+          console.log("Error in updating peofile ", error);
+          throw new Error(error);
+        }
+      },
+      onSuccess: () => {
+        toast.success("Profile Updated Successfully");
+        Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: ["authUser"],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: ["userProfile"],
+          }),
+        ]);
+      },
+      onError: () => {
+        toast.error(error.message);
+      },
+    });
+
+  const isMyProfile = authUser._id == user?._id;
+  const amIFollowing = authUser?.following.includes(user?._id);
+
   useEffect(() => {
     refetch();
   }, [username, refetch, feedType]);
+
   const handleImgChange = (e, state) => {
     const file = e.target.files[0];
     if (file) {
@@ -144,21 +197,27 @@ const ProfilePage = () => {
                 </div>
               </div>
               <div className="flex justify-end px-4 mt-5">
-                {isMyProfile && <EditProfileModal />}
+                {isMyProfile && <EditProfileModal authUser={authUser} />}
                 {!isMyProfile && (
                   <button
                     className="btn btn-outline rounded-full btn-sm"
-                    onClick={() => alert("Followed successfully")}
+                    onClick={() => followUnfollow(user?._id)}
                   >
-                    Follow
+                    {isPending && "Loading ..."}
+                    {!isPending && amIFollowing && "Unfollow"}
+                    {!isPending && !amIFollowing && "Follow"}
                   </button>
                 )}
                 {(coverImg || profileImg) && (
                   <button
                     className="btn btn-primary rounded-full btn-sm text-white px-4 ml-2"
-                    onClick={() => alert("Profile updated successfully")}
+                    onClick={async () => {
+                      await updateProfile({coverImg,profileImg});
+                      setProfileImg(null)
+                      setCoverImg(null)
+                    }}
                   >
-                    Update
+                    {isUpdatingPending ? "Updating..." : "update"}
                   </button>
                 )}
               </div>

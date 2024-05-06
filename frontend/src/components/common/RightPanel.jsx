@@ -20,7 +20,7 @@ const RightPanel = () => {
         const data = await res.json();
         if (!res.ok)
           throw new Error(
-            data.message || "Something went wrong while getting suggested users"
+            data.error || "Something went wrong while getting suggested users"
           );
 
         console.log("Yeh le data: \n", data);
