@@ -8,8 +8,17 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import LoadingSpinner from "./LoadingSpinner";
+import { convertDate } from "../../utils/helper";
 
 const Post = ({ post }) => {
+  const [comment, setComment] = useState("");
+  const postOwner = post.user;
+  const isLiked = post.likes.includes(authUser._id);
+
+  const isMyPost = authUser?.username == post?.user?.username;
+
+  const formattedDate = convertDate(post.createdAt);
+
   const queryClient = useQueryClient();
 
   const { data: authUser } = useQuery({
@@ -50,7 +59,7 @@ const Post = ({ post }) => {
     },
   });
 
-  const { mutate:likePost, isPending: isLiking } = useMutation({
+  const { mutate: likePost, isPending: isLiking } = useMutation({
     mutationFn: async () => {
       try {
         const res = await fetch(`/api/posts/like/${post._id}`, {
@@ -78,27 +87,51 @@ const Post = ({ post }) => {
       //invalidating would take time
       queryClient.setQueryData(["posts"], (oldData) => {
         return oldData.map((p) => {
-          if(p._id == post._id){
-            return {...p, likes:updatedLikes}
+          if (p._id == post._id) {
+            return { ...p, likes: updatedLikes };
           }
-          return p
-        })
-      })
+          return p;
+        });
+      });
     },
     onError: () => {
       toast.error(error.message);
     },
   });
 
-  const [comment, setComment] = useState("");
-  const postOwner = post.user;
-  const isLiked = post.likes.includes(authUser._id)
+  const { mutate: commentPost, isPending: isCommenting } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`/api/posts/comment/${post._id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: comment }),
+        });
 
-  const isMyPost = authUser?.username == post?.user?.username;
+        const data = await res.json();
 
-  const formattedDate = "1h";
+        if (!res.ok)
+          throw new Error(
+            data.error || "Something went wrong while commenting on post"
+          );
 
-  const isCommenting = false;
+        return data;
+      } catch (error) {
+        console.log("Error in deleting post client: ", error);
+        throw new Error(error);
+      }
+    },
+    onSuccess: () => {
+      toast.success("Commented successfully");
+      setComment("");
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+    onError: () => {
+      toast.error(error.message);
+    },
+  });
 
   const handleDeletePost = () => {
     deleteMutation();
@@ -106,10 +139,12 @@ const Post = ({ post }) => {
 
   const handlePostComment = (e) => {
     e.preventDefault();
+    if (isCommenting) return;
+    commentPost();
   };
 
   const handleLikePost = () => {
-    if(isLiking) return
+    if (isLiking) return;
     likePost();
   };
 
