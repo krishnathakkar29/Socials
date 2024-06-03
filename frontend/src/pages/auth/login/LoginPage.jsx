@@ -41,12 +41,11 @@ const queryClient = useQueryClient()
       } catch (error) {
         console.log("Sign in ka error", error);
 
-        throw new Error(error.message);
+        throw new Error("Invalid Credentials🤔!");
       }
     },
     onSuccess: () => {
       toast.success("Signed In Successfully");
-      //refetch the authuser query, which is invalidating a query -> it refetchs the query i would like to refetch
       queryClient.invalidateQueries({
         queryKey: ["authUser"]
       })

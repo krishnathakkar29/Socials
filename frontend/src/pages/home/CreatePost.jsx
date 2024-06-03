@@ -11,8 +11,6 @@ const CreatePost = () => {
 
   const imgRef = useRef(null);
 
-  // const isPending = false;
-  // const isError = false;
 
   const queryClient = useQueryClient();
   const { data: authUser } = useQuery({
@@ -109,7 +107,7 @@ const CreatePost = () => {
               className="fill-primary w-6 h-6 cursor-pointer"
               onClick={() => imgRef.current.click()}
             />
-            <BsEmojiSmileFill className="fill-primary w-5 h-5 cursor-pointer" />
+            {/* <BsEmojiSmileFill className="fill-primary w-5 h-5 cursor-pointer" /> */}
           </div>
           <input type="file" hidden ref={imgRef} onChange={handleImgChange} />
           <button className="btn btn-primary rounded-full btn-sm text-white px-4">

@@ -205,8 +205,8 @@ const Post = ({ post }) => {
                     .showModal()
                 }
               >
-                <FaRegComment className="w-4 h-4  text-slate-500 group-hover:text-sky-400" />
-                <span className="text-sm text-slate-500 group-hover:text-sky-400">
+                <FaRegComment className="w-4 h-4  text-slate-500 group-hover:text-[#b491c8]" />
+                <span className="text-sm text-slate-500 group-hover:text-[#b491c8]">
                   {post.comments.length}
                 </span>
               </div>

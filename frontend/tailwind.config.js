@@ -14,10 +14,12 @@ export default {
 			{
 				black: {
 					...daisyUIThemes["black"],
-					primary: "rgb(29, 155, 240)",
+					primary: "#52307c",
 					secondary: "rgb(24, 24, 24)",
 				},
 			},
 		],
 	},
 };
+
+// 

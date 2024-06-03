@@ -52,6 +52,8 @@ const ProfilePage = () => {
             data.error || "Something went wrong while fetching the profile "
           );
 
+          console.log(data)
+
         return data;
       } catch (error) {
         console.log("profile fetching ka error", error);
@@ -237,12 +239,12 @@ const ProfilePage = () => {
                       <>
                         <FaLink className="w-3 h-3 text-slate-500" />
                         <a
-                          href=""
+                          href={user?.link}
                           target="_blank"
                           rel="noreferrer"
                           className="text-sm text-blue-500 hover:underline"
                         >
-                          User ka link
+                          Links to Instagram Handle
                         </a>
                       </>
                     </div>
