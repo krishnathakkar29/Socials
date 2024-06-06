@@ -148,7 +148,7 @@ const likeUnlikePost = async (req, res, next) => {
         type: "like",
       });
 
-      const updatedLikes = post.likes
+      const updatedLikes = post.likes;
       return res.status(200).json(updatedLikes);
     }
   } catch (error) {
@@ -156,6 +156,42 @@ const likeUnlikePost = async (req, res, next) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+const saveUnsavePost = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const { id: postId } = req.params;
+
+    const post = await Post.findById(postId);
+    const user = await User.findById(userId);
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    if (user.savedPosts.includes(postId)) {
+      //remove
+      await User.findByIdAndUpdate(userId, {
+        $pull: {
+          savedPosts: postId,
+        },
+      });
+      return res.status(200).send({ message: "Removed from Saved Posts" });
+    } else {
+      //add it
+      await User.findByIdAndUpdate(userId, {
+        $push: {
+          savedPosts: postId,
+        },
+      });
+      return res.status(200).send({ message: "Added to Saved Posts" });
+    }
+  } catch (error) {
+    console.log("Error in saveUnsavePost controller: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 
 const getAllPosts = async (req, res, next) => {
   try {
@@ -201,6 +237,34 @@ const getLikedPosts = async (req, res, next) => {
     return res.status(200).json(likedPosts);
   } catch (error) {
     console.log("Error in getLikedPosts controller: ", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const getSavedPosts = async (req, res, next) => {
+  const userId = req.params.id;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const savedPosts = await Post.find({
+      _id: {
+        $in: user.savedPosts,
+      },
+    })
+      .populate({
+        path: "user",
+        select: "-password",
+      })
+      .populate({
+        path: "comments.user",
+        select: "-password",
+      });
+
+    return res.status(200).json(savedPosts);
+  } catch (error) {
+    console.log("Error in getSavedPosts controller: ", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -265,4 +329,6 @@ export {
   getLikedPosts,
   getFollowingPosts,
   getUserPosts,
+  getSavedPosts,
+  saveUnsavePost,
 };

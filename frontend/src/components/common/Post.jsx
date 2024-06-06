@@ -1,7 +1,7 @@
 import { FaRegComment } from "react-icons/fa";
 import { BiRepost } from "react-icons/bi";
 import { FaRegHeart } from "react-icons/fa";
-import { FaRegBookmark } from "react-icons/fa6";
+import { FaRegBookmark, FaBookmark, FaB } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -20,6 +20,8 @@ const Post = ({ post }) => {
   const [comment, setComment] = useState("");
   const postOwner = post.user;
   const isLiked = post.likes.includes(authUser._id);
+
+  const isSaved = authUser.savedPosts.includes(post._id);
 
   const isMyPost = authUser?.username == post?.user?.username;
 
@@ -56,6 +58,38 @@ const Post = ({ post }) => {
       queryClient.invalidateQueries({
         queryKey: ["posts"],
       });
+    },
+  });
+
+  const { mutate: savePost, isPending: isSaving } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`/api/posts/saved/${post._id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await res.json();
+
+        if (!res.ok)
+          throw new Error(
+            data.error || "Something went wrong while liking post"
+          );
+
+        return data;
+      } catch (error) {
+        console.log("Error in saving the  post client: ", error);
+        throw new Error(error);
+      }
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      toast.success(data.message);
+    },
+    onError: () => {
+      toast.error(error.message);
     },
   });
 
@@ -148,6 +182,11 @@ const Post = ({ post }) => {
     likePost();
   };
 
+  const handleSavePosts = () => {
+    if (isSaving) return;
+    savePost();
+  };
+
   return (
     <>
       <div className="flex gap-2 items-start p-4 border-b border-gray-700">
@@ -184,7 +223,9 @@ const Post = ({ post }) => {
             )}
           </div>
           <div className="flex flex-col gap-3 overflow-hidden">
-            <span className="mobile:text-[18px] mobile:mt-3 mobile:mb-3 font-semibold">{post.text}</span>
+            <span className="mobile:text-[18px] mobile:mt-3 mobile:mb-3 font-semibold">
+              {post.text}
+            </span>
             {post.img && (
               <img
                 src={post.img}
@@ -292,10 +333,16 @@ const Post = ({ post }) => {
                   0
                 </span>
               </div> */}
+              <div className="flex items-center" onClick={handleSavePosts}>
+                {isSaving && <LoadingSpinner size="sm" />}
+                {!isSaving && isSaved && (
+                  <FaBookmark className="w-5 h-5 text-slate-500 cursor-pointer" />
+                )}
+                {!isSaving && !isSaved && (
+                  <FaRegBookmark className="w-5 h-5 text-slate-500 cursor-pointer" />
+                )}
+              </div>
             </div>
-            {/* <div className="flex w-1/3 justify-end gap-2 items-center">
-              <FaRegBookmark className="w-4 h-4 text-slate-500 cursor-pointer" />
-            </div> */}
           </div>
         </div>
       </div>

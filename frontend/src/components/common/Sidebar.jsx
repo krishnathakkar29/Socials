@@ -9,7 +9,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const Sidebar = () => {
   const location = useLocation();
-  console.log(location.pathname);
   const queryClient = useQueryClient();
   const {
     mutate: logoutMutation,

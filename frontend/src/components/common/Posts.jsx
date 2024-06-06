@@ -15,10 +15,13 @@ const Posts = ({ feedType, username, userId }) => {
         return "/api/posts/following";
 
       case "posts":
-        return `/api/posts/user/${username}`
+        return `/api/posts/user/${username}`;
 
       case "likes":
-        return `/api/posts/liked/${userId}`
+        return `/api/posts/liked/${userId}`;
+
+      case "saved":
+        return `/api/posts/saved/${userId}`;
 
       default:
         return "/api/posts/all";
@@ -40,7 +43,7 @@ const Posts = ({ feedType, username, userId }) => {
         const data = await res.json();
 
         if (!res.ok) throw new Error(data.error || "Something Went Wrong");
-		console.log(data)
+        console.log(data);
 
         return data;
       } catch (error) {
