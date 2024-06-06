@@ -1,13 +1,15 @@
 import { MdHomeFilled } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 
 import { toast } from "react-hot-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const Sidebar = () => {
+  const location = useLocation();
+  console.log(location.pathname);
   const queryClient = useQueryClient();
   const {
     mutate: logoutMutation,
@@ -45,10 +47,9 @@ const Sidebar = () => {
     },
   });
 
-  const {data: authUser} = useQuery({
+  const { data: authUser } = useQuery({
     queryKey: ["authUser"],
-    
-  })
+  });
 
   return (
     <div className="md:flex-[2_2_0] w-18 max-w-52">
@@ -57,29 +58,41 @@ const Sidebar = () => {
           <h1>LogoToHome</h1>
         </Link>
         <ul className="flex flex-col gap-3 mt-4">
-          <li className="flex justify-center md:justify-start">
+          <li
+            className={`flex justify-center md:justify-start ${
+              location.pathname == "/" && "bg-[#52307c]"
+            }`}
+          >
             <Link
               to="/"
-              className="flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
+              className="flex gap-3 items-center transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
             >
               <MdHomeFilled className="w-8 h-8" />
               <span className="text-lg hidden md:block">Home</span>
             </Link>
           </li>
-          <li className="flex justify-center md:justify-start">
+          <li
+            className={`flex justify-center md:justify-start ${
+              location.pathname == "/notifications" && "bg-[#52307c]"
+            }`}
+          >
             <Link
               to="/notifications"
-              className="flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
+              className="flex gap-3 items-center transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
             >
               <IoNotifications className="w-6 h-6" />
               <span className="text-lg hidden md:block">Notifications</span>
             </Link>
           </li>
 
-          <li className="flex justify-center md:justify-start">
+          <li
+            className={`flex justify-center md:justify-start ${
+              location.pathname.includes("/profile") && "bg-[#52307c]"
+            }`}
+          >
             <Link
               to={`/profile/${authUser?.username}`}
-              className="flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
+              className="flex gap-3 items-center transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
             >
               <FaUser className="w-6 h-6" />
               <span className="text-lg hidden md:block">Profile</span>
@@ -104,7 +117,7 @@ const Sidebar = () => {
                 <p className="text-slate-500 text-sm">@{authUser?.username}</p>
               </div>
               <BiLogOut
-                className="w-5 h-5 cursor-pointer"
+                className="w-5 h-5 cursor-pointer mr-4"
                 onClick={(e) => {
                   e.preventDefault();
                   logoutMutation();

@@ -2,8 +2,12 @@ import { useState } from "react";
 
 import Posts from "../../components/common/Posts";
 import CreatePost from "./CreatePost";
+import { useQuery } from "@tanstack/react-query";
 
 const HomePage = () => {
+  const { data: authUser } = useQuery({
+    queryKey: ["authUser"],
+  });
   const [feedType, setFeedType] = useState("forYou");
 
   return (
@@ -33,7 +37,7 @@ const HomePage = () => {
           </div>
         </div>
 
-        <CreatePost />
+        {authUser?.isAdmin && <CreatePost />}
 
         <Posts feedType={feedType} />
       </div>

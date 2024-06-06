@@ -164,12 +164,12 @@ const Post = ({ post }) => {
             <Link to={`/profile/${postOwner.username}`} className="font-bold">
               {postOwner.fullName}
             </Link>
-            <span className="text-gray-700 flex gap-1 text-sm">
+            <span className="text-gray-700 flex gap-1 text-sm ">
               <Link to={`/profile/${postOwner.username}`}>
                 @{postOwner.username}
               </Link>
               <span>·</span>
-              <span>{formattedDate}</span>
+              <span className="hidden mobile:block">{formattedDate}</span>
             </span>
             {isMyPost && (
               <span className="flex justify-end flex-1">
@@ -184,7 +184,7 @@ const Post = ({ post }) => {
             )}
           </div>
           <div className="flex flex-col gap-3 overflow-hidden">
-            <span>{post.text}</span>
+            <span className="mobile:text-[18px] mobile:mt-3 mobile:mb-3 font-semibold">{post.text}</span>
             {post.img && (
               <img
                 src={post.img}
@@ -201,7 +201,7 @@ const Post = ({ post }) => {
               >
                 {isLiking && <LoadingSpinner size="sm" />}
                 {!isLiked && !isLiking && (
-                  <FaRegHeart className="w-4 h-4 cursor-pointer text-slate-500 group-hover:text-pink-500 text-md" />
+                  <FaRegHeart className="w-5 h-5 cursor-pointer text-slate-500 group-hover:text-pink-500 text-md" />
                 )}
                 {isLiked && !isLiking && (
                   <FaRegHeart className="w-5 h-5 cursor-pointer text-pink-500 text-md " />
