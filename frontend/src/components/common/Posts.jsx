@@ -3,8 +3,12 @@ import PostSkeleton from "../skeletons/PostSkeleton";
 import { POSTS } from "../../utils/db/dummy";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const Posts = ({ feedType, username, userId }) => {
+  const location = useLocation();
+  const arr = location.pathname.split("/");
+  const final = arr[arr.length - 1];
   const getPostEndPoint = () => {
     switch (feedType) {
       case "forYou":
@@ -30,6 +34,7 @@ const Posts = ({ feedType, username, userId }) => {
 
   const POST_ENDPOINT = getPostEndPoint();
 
+  
   const {
     data: posts,
     isLoading,
@@ -55,7 +60,8 @@ const Posts = ({ feedType, username, userId }) => {
 
   useEffect(() => {
     refetch();
-  }, [feedType, refetch]);
+
+  }, [feedType, refetch, final]);
 
   return (
     <>
@@ -67,7 +73,7 @@ const Posts = ({ feedType, username, userId }) => {
         </div>
       )}
       {!isLoading && !isRefetching && posts?.length === 0 && (
-        <p className="text-center my-4">No posts in this tab. Switch 👻</p>
+        <p className="text-center my-4">No posts 👻</p>
       )}
       {!isLoading && !isRefetching && posts && (
         <div>

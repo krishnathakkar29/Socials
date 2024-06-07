@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 
 import Posts from "../../components/common/Posts";
 import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
@@ -39,7 +39,7 @@ const ProfilePage = () => {
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: ["userProfile"],
+    queryKey: ["userProfile", username],
     queryFn: async () => {
       try {
         const res = await fetch(`/api/users/profile/${username}`, {
@@ -52,7 +52,7 @@ const ProfilePage = () => {
             data.error || "Something went wrong while fetching the profile "
           );
 
-          console.log(data)
+        console.log(data);
 
         return data;
       } catch (error) {
@@ -142,9 +142,9 @@ const ProfilePage = () => {
                 </Link>
                 <div className="flex flex-col">
                   <p className="font-bold text-lg">{user?.fullName}</p>
-                  <span className="text-sm text-slate-500">
+                  {/* <span className="text-sm text-slate-500">
                     {POSTS?.length} posts
-                  </span>
+                  </span> */}
                 </div>
               </div>
               {/* COVER IMG */}
@@ -214,9 +214,9 @@ const ProfilePage = () => {
                   <button
                     className="btn btn-primary rounded-full btn-sm text-white px-4 ml-2"
                     onClick={async () => {
-                      await updateProfile({coverImg,profileImg});
-                      setProfileImg(null)
-                      setCoverImg(null)
+                      await updateProfile({ coverImg, profileImg });
+                      setProfileImg(null);
+                      setCoverImg(null);
                     }}
                   >
                     {isUpdatingPending ? "Updating..." : "update"}
@@ -256,18 +256,18 @@ const ProfilePage = () => {
                     </span>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <div className="flex gap-1 items-center">
-                    <span className="font-bold text-xs">
-                      {user?.following.length}
-                    </span>
-                    <span className="text-slate-500 text-xs">Following</span>
-                  </div>
+                <div className="flex gap-2 text-xl">
                   <div className="flex gap-1 items-center">
                     <span className="font-bold text-xs">
                       {user?.followers.length}
                     </span>
                     <span className="text-slate-500 text-xs">Followers</span>
+                  </div>
+                  <div className="flex gap-1 items-center">
+                    <span className="font-bold text-xs">
+                      {user?.following.length}
+                    </span>
+                    <span className="text-slate-500 text-xs">Following</span>
                   </div>
                 </div>
               </div>
@@ -281,7 +281,7 @@ const ProfilePage = () => {
                     <div className="absolute bottom-0 w-10 h-1 rounded-full bg-primary" />
                   )}
                 </div>
-                <div
+                {/* <div
                   className="flex justify-center flex-1 p-3 text-slate-500 hover:bg-secondary transition duration-300 relative cursor-pointer"
                   onClick={() => setFeedType("saved")}
                 >
@@ -289,7 +289,7 @@ const ProfilePage = () => {
                   {feedType === "saved" && (
                     <div className="absolute bottom-0 w-10  h-1 rounded-full bg-primary" />
                   )}
-                </div>
+                </div> */}
               </div>
             </>
           )}

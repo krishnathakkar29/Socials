@@ -1,7 +1,8 @@
 import { FaRegComment } from "react-icons/fa";
 import { BiRepost } from "react-icons/bi";
 import { FaRegHeart } from "react-icons/fa";
-import { FaRegBookmark, FaBookmark, FaB } from "react-icons/fa6";
+import { FaRegBookmark, FaBookmark, FaB  } from "react-icons/fa6";
+import { FaHeart } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -245,7 +246,7 @@ const Post = ({ post }) => {
                   <FaRegHeart className="w-5 h-5 cursor-pointer text-slate-500 group-hover:text-pink-500 text-md" />
                 )}
                 {isLiked && !isLiking && (
-                  <FaRegHeart className="w-5 h-5 cursor-pointer text-pink-500 text-md " />
+                  <FaHeart className="w-5 h-5 cursor-pointer text-pink-500 text-md " />
                 )}
 
                 <span

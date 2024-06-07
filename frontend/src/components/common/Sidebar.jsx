@@ -1,14 +1,18 @@
 import { MdHomeFilled } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
-import { FaUser } from "react-icons/fa";
+import { FaRegHeart, FaUser } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
-
+import { FaHeart } from "react-icons/fa";
+import { FaRegBookmark, FaBookmark } from "react-icons/fa6";
 import { toast } from "react-hot-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const Sidebar = () => {
   const location = useLocation();
+  const arr = location.pathname.split("/")
+  const final = arr[arr.length-1]
+  console.log("yh  leeeeeee  ", final)
   const queryClient = useQueryClient();
   const {
     mutate: logoutMutation,
@@ -86,7 +90,7 @@ const Sidebar = () => {
 
           <li
             className={`flex justify-center md:justify-start ${
-              location.pathname.includes("/profile") && "bg-[#52307c]"
+              final == authUser.username && "bg-[#52307c]"
             }`}
           >
             <Link
@@ -95,6 +99,34 @@ const Sidebar = () => {
             >
               <FaUser className="w-6 h-6" />
               <span className="text-lg hidden md:block">Profile</span>
+            </Link>
+          </li>
+
+          <li
+            className={`flex justify-center md:justify-start ${
+              location.pathname == "/saved" && "bg-[#52307c]"
+            }`}
+          >
+            <Link
+              to="/saved"
+              className="flex gap-3 items-center transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
+            >
+              <FaRegBookmark className="w-6 h-6" />
+              <span className="text-lg hidden md:block">Saved Posts</span>
+            </Link>
+          </li>
+
+          <li
+            className={`flex justify-center md:justify-start ${
+              location.pathname == "/liked" && "bg-[#52307c]"
+            }`}
+          >
+            <Link
+              to="/liked"
+              className="flex gap-3 items-center transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
+            >
+              <FaRegHeart className="w-6 h-6" />
+              <span className="text-lg hidden md:block">Liked Posts</span>
             </Link>
           </li>
         </ul>

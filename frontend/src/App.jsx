@@ -10,6 +10,8 @@ import ProfilePage from "./pages/profile/ProfilePage";
 import { Toaster } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./components/common/LoadingSpinner";
+import Saved from "./pages/saved/Saved";
+import Liked from "./pages/liked/Liked";
 
 function App() {
   const {
@@ -72,6 +74,14 @@ function App() {
         <Route
           path="/profile/:username"
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/saved"
+          element={authUser ? <Saved authUser={authUser} /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/liked"
+          element={authUser ? <Liked authUser={authUser} /> : <Navigate to="/login" />}
         />
       </Routes>
       <Toaster />
