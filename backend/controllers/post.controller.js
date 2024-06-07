@@ -30,6 +30,30 @@ const createPost = async (req, res, _) => {
       img,
     });
 
+    //sending notifications
+
+    for (let followerId of user.followers) {
+      await Notification.create({
+        from: req.user._id,
+        to: followerId,
+        type: "event",
+      });
+    }
+
+    //other way
+    /*
+    const notifications = user.followers.map(followerId => ({
+      from: userId,
+      to: followerId,
+      type: "event",
+      post: newPost._id
+    }));
+
+    // Insert all notifications into the database in one go
+    await Notification.insertMany(notifications);
+    
+    */
+
     return res.status(201).json(newPost);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -191,7 +215,6 @@ const saveUnsavePost = async (req, res, next) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
 
 const getAllPosts = async (req, res, next) => {
   try {

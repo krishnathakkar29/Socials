@@ -224,13 +224,13 @@ const ProfilePage = () => {
                 )}
               </div>
 
-              <div className="flex flex-col gap-4 mt-14 px-4">
+              <div className="flex flex-col gap-4 mt-14 px-4 font-outfit">
                 <div className="flex flex-col">
                   <span className="font-bold text-lg">{user?.fullName}</span>
                   <span className="text-sm text-slate-500">
                     @{user?.username}
                   </span>
-                  <span className="text-sm my-1">{user?.bio}</span>
+                  <span className="text-sm md:text-md my-1 md:my-3">{user?.bio}</span>
                 </div>
 
                 <div className="flex gap-2 flex-wrap">
@@ -242,20 +242,24 @@ const ProfilePage = () => {
                           href={user?.link}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-sm text-blue-500 hover:underline"
+                          className="text-sm md:text-md font-semibold text-teal-200 hover:text-teal-300 hover:underline transition duration-200 font-outfit"
                         >
-                          Links to Instagram Handle
+                          📝 Click To Register For The Event 🎉
                         </a>
                       </>
                     </div>
                   )}
-                  <div className="flex gap-2 items-center">
-                    <IoCalendarOutline className="w-4 h-4 text-slate-500" />
-                    <span className="text-sm text-slate-500">
-                      {convertDate(user.createdAt)}
-                    </span>
-                  </div>
+                  {/* //it was here */}
                 </div>
+                {/* */}
+                <div className="flex gap-2 items-center">
+                  <span>Joined</span>
+                  <IoCalendarOutline className="w-4 h-4 text-slate-500" />
+                  <span className="text-sm text-slate-500">
+                    {convertDate(user.createdAt)}
+                  </span>
+                </div>
+                {/* */}
                 <div className="flex gap-2 text-xl">
                   <div className="flex gap-1 items-center">
                     <span className="font-bold text-xs">
@@ -271,6 +275,7 @@ const ProfilePage = () => {
                   </div>
                 </div>
               </div>
+
               <div className="flex w-full border-b border-gray-700 mt-4">
                 <div
                   className="flex justify-center flex-1 p-3 hover:bg-secondary transition duration-300 relative cursor-pointer"

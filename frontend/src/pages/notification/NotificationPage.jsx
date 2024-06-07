@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
-
+import { IoMdNotifications } from "react-icons/io";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
@@ -15,6 +15,7 @@ const NotificationPage = () => {
     isLoading,
     isError,
     error,
+    refetch
   } = useQuery({
     queryKey: ["getNotifications"],
     queryFn: async () => {
@@ -69,8 +70,9 @@ const NotificationPage = () => {
   });
 
   const deleteNotifications = () => {
-    deleteAllNotifications()
+    deleteAllNotifications();
   };
+
 
   return (
     <>
@@ -108,6 +110,9 @@ const NotificationPage = () => {
               {notification.type === "like" && (
                 <FaHeart className="w-7 h-7 text-red-500" />
               )}
+              {notification.type === "event" && (
+                <IoMdNotifications className="w-7 h-7 text-primary" />
+              )}
               <Link to={`/profile/${notification.from.username}`}>
                 <div className="avatar">
                   <div className="w-8 rounded-full">
@@ -123,9 +128,9 @@ const NotificationPage = () => {
                   <span className="font-bold">
                     @{notification.from.username}
                   </span>{" "}
-                  {notification.type === "follow"
-                    ? "followed you"
-                    : "liked your post"}
+                  {notification.type === "follow" && "followed you"}
+                  {notification.type == "like" && "liked your post"}
+                  {notification.type == "event" && "posted a new event"}
                 </div>
               </Link>
             </div>

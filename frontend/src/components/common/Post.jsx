@@ -1,7 +1,7 @@
 import { FaRegComment } from "react-icons/fa";
 import { BiRepost } from "react-icons/bi";
 import { FaRegHeart } from "react-icons/fa";
-import { FaRegBookmark, FaBookmark, FaB  } from "react-icons/fa6";
+import { FaRegBookmark, FaBookmark, FaB } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa";
 import { useState } from "react";
@@ -175,6 +175,10 @@ const Post = ({ post }) => {
   const handlePostComment = (e) => {
     e.preventDefault();
     if (isCommenting) return;
+    if (comment.trim() == "") {
+      toast.error("Comment Cannot be empty!");
+      return;
+    }
     commentPost();
   };
 

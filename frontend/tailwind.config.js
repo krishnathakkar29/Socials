@@ -5,6 +5,19 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        outfit: ['Outfit', 'serif'],
+      },
+      colors: {
+        gray: {
+          500: '#6B7280',
+          700: '#374151',
+          900: '#111827',
+        },
+        indigo: {
+          600: '#4F46E5',
+        },
+      },
       screens: {
         mobile: "425px",
       },
