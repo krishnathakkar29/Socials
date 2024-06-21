@@ -22,7 +22,7 @@ const Posts = ({ feedType, username, userId }) => {
         return `/api/posts/user/${username}`;
 
       case "likes":
-        return `/api/posts/liked/${userId}`;
+        return `/api/posts/likes/${userId}`;
 
       case "saved":
         return `/api/posts/saved/${userId}`;
