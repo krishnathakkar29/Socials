@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-const BACKEND_URL =  import.meta.env.VITE_BACKEND_URL 
+// const BACKEND_URL =  import.meta.env.VITE_BACKEND_URL 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
@@ -8,7 +8,7 @@ export default defineConfig({
     port: 3000,
     proxy:{
       "/api": {
-        target: BACKEND_URL,
+        target: import.meta.env.VITE_BACKEND_URL,
         changeOrigin: true
       }
     }
