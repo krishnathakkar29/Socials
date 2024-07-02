@@ -49,6 +49,10 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
+app.use("/health", (req, res) => {
+  res.send("Success!");
+});
+
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}...`);
   connectDB();
